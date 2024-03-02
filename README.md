@@ -63,7 +63,7 @@ PS: If your inputs include uploaded media, run the Gradio demo from the public U
 
 ### Deploy the Gradio demo to Hugging Face Spaces 🤗
 
-If you wish to host a demo with both the cog backend and the Gradio UI running on a Hugging Face space you can do:
+If you wish to host a demo with both the cog backend and the Gradio UI running on a [Hugging Face Space](https://huggingface.co/spaces) you can do:
 ```shell
 python grog.py --replicate_model_id fofr/face-to-sticker --run_type huggingface_spaces --huggingface_token hf_YourHuggingFaceToken --space_hardware t4-medium
 ```
