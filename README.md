@@ -48,12 +48,15 @@ This will create a new folder `docker_{model_name}_{timestamp}` with your Gradio
 
 ### Local UI, sending API calls to Replicate 🌐
 
+#### Dynamic
+
 If you want to host a local UI that sends requests to Replicate's API, you can do:
 ```shell
 python grog.py --replicate_model_id cjwbw/ledits --run_type replicate_api --replicate_token r8_YourReplicateTokenHere
 ```
 This will instantiate a Gradio UI generated dynamically that will send requests to the Replicate API
 
+#### Static
 If you wish to modify/customize your UI, you can do so by using the `--gradio_type static` 
 ```shell
 python grog.py --replicate_model_id cjwbw/ledits --run_type replicate_api --replicate_token r8_YourReplicateTokenHere --gradio_type static
