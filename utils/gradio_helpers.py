@@ -138,8 +138,9 @@ def build_gradio_inputs(ordered_input_schema, example_inputs=None):
     label="{prop.get("title")}", info={'"'+prop.get("description")+'"' if prop.get("description") else 'None'}, value={prop.get("default")}
 ))\n"""
         elif prop["type"] == "string" and prop.get("format") == "uri":
-            if example_inputs:
-                input_type = detect_file_type(example_inputs[name])
+            input_type_example = example_inputs.get(name, None)
+            if input_type_example:
+                input_type = detect_file_type(input_type_example)
             else:
                 input_type = None
             if input_type == "image":
@@ -160,7 +161,7 @@ def build_gradio_inputs(ordered_input_schema, example_inputs=None):
             else:
                 input_field = gr.File(label=prop.get("title"))
                 input_field_string = f"""inputs.append(gr.File(
-    label="{prop.get("title")}"
+    label="{prop.get("title")}", info={'"'+prop.get("description")+'"' if prop.get("description") else 'None'}
 ))\n"""
         else:
             input_field = gr.Textbox(
@@ -285,7 +286,7 @@ def create_dynamic_gradio_app(
     local_base=False,
 ):
     def predict(request: gr.Request, *args):
-        keys = args[-1]
+
         payload = {"input": {}}
         if api_id:
             payload["version"] = api_id
@@ -348,7 +349,7 @@ def create_gradio_app_script(
         base_url = 'base_url = "http://localhost:7860"'
     else:
         base_url = """parsed_url = urlparse(str(request.url))
-base_url = parsed_url.scheme + "://" + parsed_url.netloc"""
+    base_url = parsed_url.scheme + "://" + parsed_url.netloc"""
     headers_string = f"""headers = {headers}\n"""
     api_id_value = f'payload["version"] = "{api_id}"' if api_id is not None else ""
     definition_string = """def predict(request: gr.Request, *args):"""
