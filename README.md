@@ -26,9 +26,9 @@ python grog.py --replicate_model_id fofr/face-to-sticker --run_type local
 ## Usage 
 
 There are 3 ways to run Grog: 
-- [Full local, Cog and Gradio run in your machine 🖥️](#run-the-cog-model-locally-🖥️)
-- [Local UI, Replicate API 🌐](#local-ui-sending-api-calls-to-replicate-🌐)
-- [Deploy to Hugging Face Spaces 🤗](#deploy-the-gradio-demo-to-hugging-face-spaces-🤗)
+- [Full local, Cog and Gradio run in your machine 🖥️](#run-the-model-and-ui-locally-in-your-machine-%EF%B8%8F)
+- [Local UI, Replicate API 🌐](#local-ui-sending-api-calls-to-replicate-)
+- [Deploy to Hugging Face Spaces 🤗](#deploy-the-gradio-demo-to-hugging-face-spaces-)
 
 ### Run the model and UI locally in your machine 🖥️
 
