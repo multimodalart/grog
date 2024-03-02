@@ -4,11 +4,11 @@
 
 **Experimental: things are work in progress and can break** 
 
-[Cog](https://github.com/replicate/cog) is an open source tool by [Replicate](https://replicate.com) that aims to package machine learning models into reproducible docker container. It creates an API and can be used locally or hosted in platforms like [Replicate](https://replicate.com)
+[Cog](https://github.com/replicate/cog) is an open source tool by [Replicate](https://replicate.com) that aims to package machine learning models into a reproducible docker container that creates an API and can be used locally, hosted in the cloud or on [Replicate](https://replicate.com).
 
-[Gradio](https://gradio.app) is an open source tool by [Hugging Face](https://huggingface.co) that aims to create easy demos and web UIs for machine learning models, with few lines of code and pure python. Such UIs can be used locally, or hosted in cloud machines or [Hugging Face Spaces](https://huggingface.co/spaces).
+[Gradio](https://gradio.app) is an open source tool by [Hugging Face](https://huggingface.co) that aims to create easy demos and web UIs for machine learning models, with few lines of code and pure python. Such UIs can be used locally, hosted in the cloud or on [Hugging Face Spaces](https://huggingface.co/spaces).
 
-Grog creates a Gradio UI for a Cog application 🌈
+Grog is a cli that creates a Gradio UI for a Cog application 🌈
 
 ## Installing
 To use `grog`, you should first install it's requirements
@@ -83,4 +83,4 @@ All cli params you can use with `grog.py`:
 - `cog_url`: *Not implemented* - when implemented, will allow the users to insert as an input a `cog` Docker image directly
 
 ## Limitations
-Right now, it is required for the Cog image to be hosted on Replicate for Grog to function, as generating a Gradio UI directly from a cog image isn't implemented yet due to limitations on both Cog (lack of documentation on typing and number of outputs) and Gradio (no dynamic components). This is planned to be addressed.
+Right now, it is required for the Cog image to be hosted on Replicate for Grog to function, as generating a Gradio UI directly from a cog image is not yet implemented due to limitations on both Cog (regarding documentation on typing and number of outputs) and Gradio (no dynamic components). This is planned to be addressed in the future.
