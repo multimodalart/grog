@@ -8,7 +8,7 @@
 
 [Gradio](https://gradio.app) is an open source tool by [Hugging Face](https://huggingface.co) that aims to create easy demos and web UIs for machine learning models, with few lines of code and pure python. Such UIs can be used locally, hosted in the cloud or on [Hugging Face Spaces](https://huggingface.co/spaces).
 
-Grog is a cli that creates a Gradio UI for a Cog application 🌈
+### 🌈 Grog is a cli that creates a Gradio UI for a Cog application 🌈
 
 ## Installing
 To use `grog`, you should first install it's requirements
