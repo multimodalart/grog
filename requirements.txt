@@ -1,0 +1,7 @@
+requests
+beautifulsoup4
+gradio
+Pillow
+prance
+huggingface_hub
+python-slugify
