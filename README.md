@@ -76,8 +76,8 @@ All cli params you can use with `grog.py`:
 - `replicate_model_id` (_required_): The Replicate model id you wish to create a Gradio UI for (e.g.: `fofr/face-to-sticker`) 
 - `run_type` (_required_): Ways to run the model: `replicate_api` (local UI, remote API), `local` (local UI, local cog), `huggingface_spaces` (deploy cog and gradio to a Hugging Face Space)
 - `gradio_type` (_required_): Types of Gradio app. `--gradio_type static` will allow users to edit/customize the UI, `--gradio_type dynamic` will generate the application dynamically. Ignored when `--run_type huggingface_spaces` _(default: dynamic)_
-- `replicate_token`: Your Replicate token ([obtained here](#)). Mandatory when `--run_type replicate_api`
-- `huggingface_token`: Your Hugging Face token ([obtained here](#)). Mandatory when `--run_type huggingface_spaces`
+- `replicate_token`: Your Replicate token ([obtained here](https://replicate.com/account/api-tokens)). Mandatory when `--run_type replicate_api`
+- `huggingface_token`: Your Hugging Face token ([obtained here](https://huggingface.co/settings/tokens)). Mandatory when `--run_type huggingface_spaces`
 - `docker_port` (_optional_): For `--run_type local` and `--gradio_type dynamic`, change the default docker port. If `--gradio_type static`, you can change the ports in your `Dockerfile` and `app.py`. 
 - `space_hardware` (_optional_): For `--run_type huggingface_spaces`, pick which hardware to use on the Space
     - `cpu-basic`, `cpu-upgrade`, `t4-small`, `t4-medium`, `a10g-small`, `a10g-large` (all hardwares beyond `cpu-basic` are [billed](https://huggingface.co/pricing))
