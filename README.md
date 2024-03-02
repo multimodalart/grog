@@ -1,13 +1,14 @@
 # Grog 🖖
+
 ## Gradio 🤝 Cog
 
-** Experimental: things are work in progress and can break ** 
+**Experimental: things are work in progress and can break** 
 
 [Cog](https://github.com/replicate/cog) is an open source tool by [Replicate](https://replicate.com) that aims to package machine learning models into reproducible docker container. It creates an API and can be used locally or hosted in platforms like [Replicate](https://replicate.com)
 
 [Gradio](https://gradio.app) is an open source tool by [Hugging Face](https://huggingface.co) that aims to create easy demos and web UIs for machine learning models, with few lines of code and pure python. Such UIs can be used locally, or hosted in cloud machines or [Hugging Face Spaces](https://huggingface.co/spaces).
 
-Grog creates a Gradio UI for a Cog application
+Grog creates a Gradio UI for a Cog application 🌈
 
 ## Installing
 To use `grog`, you should first install it's requirements
@@ -24,10 +25,14 @@ python grog.py --replicate_model_id fofr/face-to-sticker --run_type local
 
 ## Usage 
 
-### Run the cog model locally
+There are 3 ways to run Grog: 
+- [Full local, Cog and Gradio run in your machine 🖥️](#run-the-cog-model-locally)
+- [Local UI, Replicate API ☁️](#local-ui-sending-api-calls-to-replicate)
+- [Deploy to Hugging Face Spaces 🤗](#deploy-the-gradio-demo-to-hugging-face-spaces)
 
-You can run the cog models locally and instantiate a Gradio UI to accompany it, for that you can do 
+### Run the model and UI locally in your machine 🖥️
 
+Both Cog and Gradio run in your machine. No remote server is needed; your computer needs to be powerful enough to run the chosen model. This means having a decent GPU for most modern Cog/Replicate images. You need Docker installed, and run: 
 ```shell
 python grog.py --replicate_model_id fofr/face-to-sticker --run_type local
 ```
@@ -40,7 +45,7 @@ python grog.py --replicate_model_id fofr/face-to-sticker --run_type local --grad
 ```
 This will create a new folder `docker_{model_name}_{timestamp}` with your Gradio `app.py` that you can edit/customize and a `Dockerfile` to build an image that will provide your Gradio + Cog application.
 
-### Local UI, sending API calls to Replicate
+### Local UI, sending API calls to Replicate ☁️
 
 If you want to host a local UI that sends requests to Replicate's API, you can do:
 ```shell
@@ -56,7 +61,7 @@ This will create a Gradio app `app_{name-of-model}-{timestamp}.py` that requests
 
 PS: If your inputs include uploaded media, run the Gradio demo from the public URL, as the Replicate API requires uploaded files to be accessible from existing public URL.
 
-### Deploy the Gradio demo to Hugging Face Spaces
+### Deploy the Gradio demo to Hugging Face Spaces 🤗
 
 If you wish to host a demo with both the cog backend and the Gradio UI running on a Hugging Face space you can do:
 ```shell
@@ -76,7 +81,6 @@ All cli params you can use with `grog.py`:
     - `cpu-basic`, `cpu-upgrade`, `t4-small`, `t4-medium`, `a10g-small`, `a10g-large` (all hardwares beyond `cpu-basic` are [billed](https://huggingface.co/pricing))
 - `space_repo` (_optional_): For `--run_type huggingface_spaces`, you can choose the name of your Space. If not set up, it will be set as the same name as the cog model.
 - `cog_url`: *Not implemented* - when implemented, will allow the users to insert as an input a `cog` Docker image directly
-
 
 ## Limitations
 Right now, it is required for the Cog image to be hosted on Replicate for Grog to function, as generating a Gradio UI directly from a cog image isn't implemented yet due to limitations on both Cog (lack of documentation on typing and number of outputs) and Gradio (no dynamic components). This is planned to be addressed.
