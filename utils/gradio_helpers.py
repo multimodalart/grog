@@ -155,7 +155,7 @@ def build_gradio_inputs(ordered_input_schema, example_inputs=None):
             elif input_type == "video":
                 input_field = gr.Video(label=prop.get("title"))
                 input_field_string = f"""inputs.append(gr.Video(
-    abel="{prop.get("title")}"
+    label="{prop.get("title")}"
 ))\n"""
             else:
                 input_field = gr.File(label=prop.get("title"))
