@@ -53,7 +53,7 @@ python grog.py --replicate_model_id fofr/face-to-sticker --run_type replicate_ap
 ```
 This will instantiate a Gradio UI generated dynamically that will send requests to the Replicate API
 
-If you wish to modify/customize your UI, you can do so by using the "static" `gradio_type` 
+If you wish to modify/customize your UI, you can do so by using the `--gradio_type static` 
 ```shell
 python grog.py --replicate_model_id fofr/face-to-sticker --run_type replicate_api --replicate_token r8_YourReplicateTokenHere --gradio_type static
 ```
