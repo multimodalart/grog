@@ -32,18 +32,19 @@ There are 3 ways to run Grog:
 
 ### Run the model and UI locally in your machine 🖥️
 
-Both Cog and Gradio run in your machine. No remote server is needed; your computer needs to be powerful enough to run the chosen model. This means having a decent GPU for most modern Cog/Replicate images. You need Docker installed, and run: 
+#### Dynamic
+Both Cog and Gradio run in your machine. No remote server is needed; your computer needs to be powerful enough to run the chosen model. This means having a decent GPU for most modern Cog/Replicate images. You need to have Docker installed, and run: 
 ```shell
 python grog.py --replicate_model_id cjwbw/ledits --run_type local
 ```
-
 This will download the Docker image to your computer, initialize it, crete a dynamic Gradio UI for it and provide that to you (tested only on Linux)
 
-If you wish to customize the UI to your liking or change how the Docker Image is dealt with and instantiated (custom ports, etc), you may also run
+#### Static
+If you wish to customize the UI to your liking, change how the Docker Image is dealt with and instantiated (custom ports, etc); or even host the demo in the cloud, you may run
 ```shell
 python grog.py --replicate_model_id cjwbw/ledits --run_type local --gradio_type static
 ```
-This will create a new folder `docker_{model_name}_{timestamp}` with your Gradio `app.py` that you can edit/customize and a `Dockerfile` to build an image that will provide your Gradio + Cog application.
+This will create a new folder `docker_{model_name}_{timestamp}` with your Gradio `app.py` that you can edit/customize and a `Dockerfile` to build an image that will provide your Gradio + Cog application. This `Dockerfile` can not only be used locally, but also in any cloud service of your preference.
 
 ### Local UI, sending API calls to Replicate 🌐
 
@@ -68,7 +69,7 @@ If you wish to host a demo with both the cog backend and the Gradio UI running o
 python grog.py --replicate_model_id cjwbw/ledits --run_type huggingface_spaces --huggingface_token hf_YourHuggingFaceToken --space_hardware t4-medium
 ```
 
-This will create a `Docker` Space on yout Hugging Face account that will mount the cog image and the Gradio demo, and function just like any other Hugging Face Space. You can modify the UI by editing the `app.py` in the remote repository.
+This will create a `Docker` Space on yout Hugging Face account that will mount the cog image and the Gradio demo, and function just like any other Hugging Face Space. You can modify the UI by editing the `app.py` in the remote repository. (This is essentially the same as deploying the Docker folder from `--run_type local --gradio_type static` to HF Spaces).
 
 ## Documentation
 
