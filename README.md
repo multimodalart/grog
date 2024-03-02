@@ -26,9 +26,9 @@ python grog.py --replicate_model_id fofr/face-to-sticker --run_type local
 ## Usage 
 
 There are 3 ways to run Grog: 
-- [Full local, Cog and Gradio run in your machine 🖥️](#run-the-cog-model-locally)
-- [Local UI, Replicate API ☁️](#local-ui-sending-api-calls-to-replicate)
-- [Deploy to Hugging Face Spaces 🤗](#deploy-the-gradio-demo-to-hugging-face-spaces)
+- [Full local, Cog and Gradio run in your machine 🖥️](#run-the-cog-model-locally-🖥️)
+- [Local UI, Replicate API 🌐](#local-ui-sending-api-calls-to-replicate-🌐)
+- [Deploy to Hugging Face Spaces 🤗](#deploy-the-gradio-demo-to-hugging-face-spaces-🤗)
 
 ### Run the model and UI locally in your machine 🖥️
 
@@ -45,7 +45,7 @@ python grog.py --replicate_model_id fofr/face-to-sticker --run_type local --grad
 ```
 This will create a new folder `docker_{model_name}_{timestamp}` with your Gradio `app.py` that you can edit/customize and a `Dockerfile` to build an image that will provide your Gradio + Cog application.
 
-### Local UI, sending API calls to Replicate ☁️
+### Local UI, sending API calls to Replicate 🌐
 
 If you want to host a local UI that sends requests to Replicate's API, you can do:
 ```shell
