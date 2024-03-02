@@ -4,9 +4,9 @@
 
 **Experimental: things are work in progress and can break** 
 
-[Cog](https://github.com/replicate/cog) is an open source tool by [Replicate](https://replicate.com) that aims to package machine learning models into a reproducible docker container that creates an API and can be used locally, hosted in the cloud or on [Replicate](https://replicate.com).
+[Cog](https://github.com/replicate/cog) is an open source tool that aims to package machine learning models into a reproducible docker container that creates an API and can be used locally, hosted in the cloud or on [Replicate](https://replicate.com).
 
-[Gradio](https://gradio.app) is an open source tool by [Hugging Face](https://huggingface.co) that aims to create easy demos and web UIs for machine learning models, with few lines of code and pure python. Such UIs can be used locally, hosted in the cloud or on [Hugging Face Spaces](https://huggingface.co/spaces).
+[Gradio](https://gradio.app) is an open source tool that aims to create easy demos and web UIs for machine learning models, with few lines of code and pure python. Such UIs can be used locally, hosted in the cloud or on [Hugging Face Spaces](https://huggingface.co/spaces).
 
 ### 🌈 Grog is a cli that creates a Gradio UI for a Cog application 🌈
 
