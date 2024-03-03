@@ -284,6 +284,7 @@ def create_dynamic_gradio_app(
     model_description="",
     names=[],
     local_base=False,
+    hostname="0.0.0.0",
 ):
     def predict(request: gr.Request, *args):
 
@@ -292,7 +293,7 @@ def create_dynamic_gradio_app(
             payload["version"] = api_id
         parsed_url = urlparse(str(request.url))
         if local_base:
-            base_url = "http://localhost:7860"
+            base_url = f"http://{hostname}:7860"
         else:
             base_url = parsed_url.scheme + "://" + parsed_url.netloc
         for i, key in enumerate(names):
@@ -340,13 +341,14 @@ def create_gradio_app_script(
     title="",
     model_description="",
     local_base=False,
+    hostname="0.0.0.0"
 ):
     headers = {"Content-Type": "application/json"}
     if replicate_token:
         headers["Authorization"] = f"Token {replicate_token}"
 
     if local_base:
-        base_url = 'base_url = "http://localhost:7860"'
+        base_url = f'base_url = "http://{hostname}:7860"'
     else:
         base_url = """parsed_url = urlparse(str(request.url))
     base_url = parsed_url.scheme + "://" + parsed_url.netloc"""
