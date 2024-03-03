@@ -72,7 +72,7 @@ def wait_util_cog_ready(hostname, docker_port):
             response = requests.get(f"http://{hostname}:{docker_port}/health-check")
             response.raise_for_status()
             if response.json()["status"] == "READY":
-                print("Cog server is ready.")
+                print("Cog Server is ready.")
                 break
             else:
                 print(f"Waiting for cog server (models loading) {docker_port}...")
@@ -94,10 +94,10 @@ def wait_until_docker(hostname, docker_port):
             with socket.create_connection(
                 (hostname, int(docker_port)), timeout=1
             ) as sock:
-                print("Cog server is ready.")
+                print("Cog Docker is ready.")
                 break  # Exit the loop when the server is up
         except (socket.timeout, ConnectionRefusedError):
-            print(f"Waiting for cog server to start on port {docker_port}...")
+            print(f"Waiting for cog docker to start on port {docker_port}...")
             counter += 1
             time.sleep(5)
             if counter >= 250:
