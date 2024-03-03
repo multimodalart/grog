@@ -347,6 +347,10 @@ def create_dynamic_gradio_app(
             )
 
         else:
+            if response.status_code == 409:
+                raise gr.Error(
+                    f"Sorry, the Cog image is still processing. Try again in a bit."
+                )
             raise gr.Error(f"The submission failed! Error: {response.status_code}")
 
     app = gr.Interface(
@@ -425,6 +429,8 @@ def predict(request: gr.Request, *args, progress=gr.Progress(track_tqdm=True)):"
         
         return tuple(processed_outputs) if len(processed_outputs) > 1 else processed_outputs[0]
     else:
+        if(response.status_code == 409):
+            raise gr.Error(f"Sorry, the Cog image is still processing. Try again in a bit.")
         raise gr.Error(f"The submission failed! Error: {{response.status_code}}")\n"""
 
     interface_string = f"""title = "{title}"
