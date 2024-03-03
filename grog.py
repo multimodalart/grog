@@ -357,24 +357,32 @@ def main():
                 from huggingface_hub import HfApi
 
                 api = HfApi(token=args.huggingface_token)
-
-                space_id = api.create_repo(
-                    repo_id=args.space_repo if args.space_repo else slugify(model_name),
-                    repo_type="space",
-                    exist_ok=True,
-                    space_sdk="docker",
-                    space_hardware=args.space_hardware,
-                    private=True,
-                )
+                try:
+                    space_id = api.create_repo(
+                        repo_id=(
+                            args.space_repo if args.space_repo else slugify(model_name)
+                        ),
+                        repo_type="space",
+                        exist_ok=True,
+                        space_sdk="docker",
+                        space_hardware=args.space_hardware,
+                        private=True,
+                    )
+                except:
+                    raise Exception("Something went wrong with HF repo creation")
                 parts = space_id.split("/")
                 space_nicename = "/".join(parts[-2:])
                 print(space_nicename)
-                api.upload_folder(
-                    repo_id=space_nicename,
-                    folder_path=f"{dir_name}",
-                    repo_type="space",
-                )
+                try:
+                    api.upload_folder(
+                        repo_id=space_nicename,
+                        folder_path=f"{dir_name}",
+                        repo_type="space",
+                    )
+                except:
+                    raise Exception("Something went wrong with HF repo uploading")
                 print(f"Uploaded to Hugging Face. Access it at {space_id}")
+                shutil.rmtree(dir_name)
 
         elif args.run_type == "replicate_api":
             app_file = f"app_{model_name}_{int(datetime.now().timestamp())}.py"
