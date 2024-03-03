@@ -53,17 +53,20 @@ def detect_file_type(filename):
     ]
 
     # Extract the file extension
-    extension = filename[filename.rfind(".") :].lower()
+    if isinstance(filename, str):
+        extension = filename[filename.rfind(".") :].lower()
 
-    # Check the extension against each list
-    if extension in audio_extensions:
-        return "audio"
-    elif extension in image_extensions:
-        return "image"
-    elif extension in video_extensions:
-        return "video"
-    else:
-        return "string"
+        # Check the extension against each list
+        if extension in audio_extensions:
+            return "audio"
+        elif extension in image_extensions:
+            return "image"
+        elif extension in video_extensions:
+            return "video"
+        else:
+            return "string"
+    elif isinstance(filename, list):
+        return "list"
 
 
 def build_gradio_inputs(ordered_input_schema, example_inputs=None):
@@ -81,7 +84,7 @@ def build_gradio_inputs(ordered_input_schema, example_inputs=None):
                 value=prop.get("default"),
             )
             input_field_string = f"""inputs.append(gr.Dropdown(
-    choices={prop["enum"]}, label="{prop.get("title")}", info={'"'+prop.get("description")+'"' if prop.get("description") else 'None'}, value="{prop.get("default")}"
+    choices={prop["enum"]}, label="{prop.get("title")}", info={"'''"+prop.get("description")+"'''" if prop.get("description") else 'None'}, value="{prop.get("default")}"
 ))\n"""
         elif prop["type"] == "integer":
             if prop.get("minimum") and prop.get("maximum"):
@@ -94,7 +97,7 @@ def build_gradio_inputs(ordered_input_schema, example_inputs=None):
                     step=1,
                 )
                 input_field_string = f"""inputs.append(gr.Slider(
-    label="{prop.get("title")}", info={'"'+prop.get("description")+'"' if prop.get("description") else 'None'}, value={prop.get("default")},
+    label="{prop.get("title")}", info={"'''"+prop.get("description")+"'''" if prop.get("description") else 'None'}, value={prop.get("default")},
     minimum={prop.get("minimum")}, maximum={prop.get("maximum")}, step=1,
 ))\n"""
             else:
@@ -104,7 +107,7 @@ def build_gradio_inputs(ordered_input_schema, example_inputs=None):
                     value=prop.get("default"),
                 )
                 input_field_string = f"""inputs.append(gr.Number(
-    label="{prop.get("title")}", info={'"'+prop.get("description")+'"' if prop.get("description") else 'None'}, value={prop.get("default")}
+    label="{prop.get("title")}", info={"'''"+prop.get("description")+"'''" if prop.get("description") else 'None'}, value={prop.get("default")}
 ))\n"""
         elif prop["type"] == "number":
             if prop.get("minimum") and prop.get("maximum"):
@@ -116,7 +119,7 @@ def build_gradio_inputs(ordered_input_schema, example_inputs=None):
                     maximum=prop.get("maximum"),
                 )
                 input_field_string = f"""inputs.append(gr.Slider(
-    label="{prop.get("title")}", info={'"'+prop.get("description")+'"' if prop.get("description") else 'None'}, value={prop.get("default")},
+    label="{prop.get("title")}", info={"'''"+prop.get("description")+"'''" if prop.get("description") else 'None'}, value={prop.get("default")},
     minimum={prop.get("minimum")}, maximum={prop.get("maximum")}
 ))\n"""
             else:
@@ -126,7 +129,7 @@ def build_gradio_inputs(ordered_input_schema, example_inputs=None):
                     value=prop.get("default"),
                 )
                 input_field_string = f"""inputs.append(gr.Number(
-    label="{prop.get("title")}", info={'"'+prop.get("description")+'"' if prop.get("description") else 'None'}, value={prop.get("default")}
+    label="{prop.get("title")}", info={"'''"+prop.get("description")+"'''" if prop.get("description") else 'None'}, value={prop.get("default")}
 ))\n"""
         elif prop["type"] == "boolean":
             input_field = gr.Checkbox(
@@ -135,9 +138,11 @@ def build_gradio_inputs(ordered_input_schema, example_inputs=None):
                 value=prop.get("default"),
             )
             input_field_string = f"""inputs.append(gr.Checkbox(
-    label="{prop.get("title")}", info={'"'+prop.get("description")+'"' if prop.get("description") else 'None'}, value={prop.get("default")}
+    label="{prop.get("title")}", info={"'''"+prop.get("description")+"'''" if prop.get("description") else 'None'}, value={prop.get("default")}
 ))\n"""
-        elif prop["type"] == "string" and prop.get("format") == "uri":
+        elif (
+            prop["type"] == "string" and prop.get("format") == "uri" and example_inputs
+        ):
             input_type_example = example_inputs.get(name, None)
             if input_type_example:
                 input_type = detect_file_type(input_type_example)
@@ -161,21 +166,15 @@ def build_gradio_inputs(ordered_input_schema, example_inputs=None):
             else:
                 input_field = gr.File(label=prop.get("title"))
                 input_field_string = f"""inputs.append(gr.File(
-    label="{prop.get("title")}", info={'"'+prop.get("description")+'"' if prop.get("description") else 'None'}
+    label="{prop.get("title")}"
 ))\n"""
         else:
             input_field = gr.Textbox(
                 label=prop.get("title"),
-                info={
-                    (
-                        '"' + prop.get("description") + '"'
-                        if prop.get("description")
-                        else "None"
-                    )
-                },
+                info=prop.get("description"),
             )
             input_field_string = f"""inputs.append(gr.Textbox(
-    label="{prop.get("title")}", info={'"'+prop.get("description")+'"' if prop.get("description") else 'None'}
+    label="{prop.get("title")}", info={"'''"+prop.get("description")+"'''" if prop.get("description") else 'None'}
 ))\n"""
         inputs.append(input_field)
         input_field_strings += f"{input_field_string}\n"
@@ -188,22 +187,32 @@ def build_gradio_inputs(ordered_input_schema, example_inputs=None):
 def build_gradio_outputs_replicate(output_types):
     outputs = []
     output_field_strings = """outputs = []\n"""
-
-    for output in output_types:
-        if output == "image":
-            output_field = gr.Image()
-            output_field_string = "outputs.append(gr.Image())"
-        elif output == "audio":
-            output_field = gr.Audio()
-            output_field_string = "outputs.append(gr.Audio())"
-        elif output == "video":
-            output_field = gr.Video()
-            output_field_string = "outputs.append(gr.Video())"
-        else:
-            output_field = gr.Textbox()
-            output_field_string = "outputs.append(gr.Textbox())"
+    if output_types:
+        for output in output_types:
+            if output == "image":
+                output_field = gr.Image()
+                output_field_string = "outputs.append(gr.Image())"
+            elif output == "audio":
+                output_field = gr.Audio(type="filepath")
+                output_field_string = "outputs.append(gr.Audio(type='filepath'))"
+            elif output == "video":
+                output_field = gr.Video()
+                output_field_string = "outputs.append(gr.Video())"
+            elif output == "string":
+                output_field = gr.Textbox()
+                output_field_string = "outputs.append(gr.Textbox())"
+            elif output == "json":
+                output_field = gr.JSON()
+                output_field_string = "outputs.append(gr.JSON())"
+            elif output == "list":
+                output_field = gr.JSON()
+                output_field_string = "outputs.append(gr.JSON())"
+            outputs.append(output_field)
+            output_field_strings += f"{output_field_string}\n"
+    else:
+        output_field = gr.JSON()
+        output_field_string = "outputs.append(gr.JSON())"
         outputs.append(output_field)
-        output_field_strings += f"{output_field_string}\n"
 
     return outputs, output_field_strings
 
@@ -217,36 +226,34 @@ def process_outputs(outputs):
     for output in outputs:
         if not output:
             continue
-        if output.startswith("data:image"):
-            # Process as image
-            base64_data = output.split(",", 1)[1]
-            image_data = base64.b64decode(base64_data)
-            image_stream = io.BytesIO(image_data)
-            image = Image.open(image_stream)
-            output_values.append(image)
-        elif output.startswith("data:audio"):
-            base64_data = output.split(",", 1)[1]
-            audio_data = base64.b64decode(base64_data)
-            audio_stream = io.BytesIO(audio_data)
-            # Here you can save the audio or return the stream for further processing
-            filename = f"{uuid.uuid4()}.wav"  # Change format as needed
-            with open(filename, "wb") as audio_file:
-                audio_file.write(audio_stream.getbuffer())
-            output_values.append(filename)
-            # return gr.update(visible=False), gr.update(visible=True, value=filename), gr.update(visible=False), keys
-        elif output.startswith("data:video"):
-            base64_data = output.split(",", 1)[1]
-            video_data = base64.b64decode(base64_data)
-            video_stream = io.BytesIO(video_data)
-            # Here you can save the audio or return the stream for further processing
-            filename = f"{uuid.uuid4()}.mp4"  # Change format as needed
-            with open(filename, "wb") as video_file:
-                video_file.write(video_stream.getbuffer())
-            output_values.append(filename)
+        if isinstance(output, str):
+            if output.startswith("data:image"):
+                base64_data = output.split(",", 1)[1]
+                image_data = base64.b64decode(base64_data)
+                image_stream = io.BytesIO(image_data)
+                image = Image.open(image_stream)
+                output_values.append(image)
+            elif output.startswith("data:audio"):
+                base64_data = output.split(",", 1)[1]
+                audio_data = base64.b64decode(base64_data)
+                audio_stream = io.BytesIO(audio_data)
+                filename = f"{uuid.uuid4()}.wav"  # Change format as needed
+                with open(filename, "wb") as audio_file:
+                    audio_file.write(audio_stream.getbuffer())
+                output_values.append(filename)
+            elif output.startswith("data:video"):
+                base64_data = output.split(",", 1)[1]
+                video_data = base64.b64decode(base64_data)
+                video_stream = io.BytesIO(video_data)
+                # Here you can save the audio or return the stream for further processing
+                filename = f"{uuid.uuid4()}.mp4"  # Change format as needed
+                with open(filename, "wb") as video_file:
+                    video_file.write(video_stream.getbuffer())
+                output_values.append(filename)
+            else:
+                output_values.append(output)
         else:
             output_values.append(output)
-            # return gr.update(visible=False), gr.update(visible=False), gr.update(visible=True, value=output), keys
-    # output_values.append(keys)
     return output_values
 
 
@@ -285,8 +292,9 @@ def create_dynamic_gradio_app(
     names=[],
     local_base=False,
 ):
-    def predict(request: gr.Request, *args):
+    expected_outputs = len(outputs)
 
+    def predict(request: gr.Request, *args, progress=gr.Progress(track_tqdm=True)):
         payload = {"input": {}}
         if api_id:
             payload["version"] = api_id
@@ -299,11 +307,13 @@ def create_dynamic_gradio_app(
             value = args[i]
             if value and (os.path.exists(str(value))):
                 value = f"{base_url}/file=" + value
-            payload["input"][key] = value
+            if value is not None and value != "":
+                payload["input"][key] = value
+        print(payload)
         headers = {"Content-Type": "application/json"}
         if replicate_token:
             headers["Authorization"] = f"Token {replicate_token}"
-
+        print(headers)
         response = requests.post(api_url, headers=headers, json=payload)
         if response.status_code == 201:
             follow_up_url = response.json()["urls"]["get"]
@@ -313,10 +323,29 @@ def create_dynamic_gradio_app(
                     raise gr.Error("The submission failed!")
                 response = requests.get(follow_up_url, headers=headers)
                 time.sleep(1)
+                # TODO: Add a failing mechanism if the API gets stuck
         if response.status_code == 200:
             json_response = response.json()
-            outputs = parse_outputs(json_response["output"])
-            return tuple(process_outputs(outputs))
+            # If the output component is JSON return the entire output response
+            if outputs[0].get_config()["name"] == "json":
+                return json_response["output"]
+            predict_outputs = parse_outputs(json_response["output"])
+            processed_outputs = process_outputs(predict_outputs)
+            difference_outputs = expected_outputs - len(processed_outputs)
+            # If less outputs than expected, hide the extra ones
+            if difference_outputs > 0:
+                extra_outputs = [gr.update(visible=False)] * difference_outputs
+                processed_outputs.extend(extra_outputs)
+            # If more outputs than expected, cap the outputs to the expected number if
+            elif difference_outputs < 0:
+                processed_outputs = processed_outputs[:difference_outputs]
+
+            return (
+                tuple(processed_outputs)
+                if len(processed_outputs) > 1
+                else processed_outputs[0]
+            )
+
         else:
             raise gr.Error(f"The submission failed! Error: {response.status_code}")
 
@@ -352,7 +381,8 @@ def create_gradio_app_script(
     base_url = parsed_url.scheme + "://" + parsed_url.netloc"""
     headers_string = f"""headers = {headers}\n"""
     api_id_value = f'payload["version"] = "{api_id}"' if api_id is not None else ""
-    definition_string = """def predict(request: gr.Request, *args):"""
+    definition_string = """expected_outputs = len(outputs)
+def predict(request: gr.Request, *args, progress=gr.Progress(track_tqdm=True)):"""
     payload_string = f"""payload = {{"input": {{}}}}
     {api_id_value}
     
@@ -361,7 +391,8 @@ def create_gradio_app_script(
         value = args[i]
         if value and (os.path.exists(str(value))):
             value = f"{{base_url}}/file=" + value
-        payload["input"][key] = value\n"""
+        if value is not None and value != "":
+            payload["input"][key] = value\n"""
 
     request_string = (
         f"""response = requests.post("{api_url}", headers=headers, json=payload)\n"""
@@ -378,8 +409,21 @@ def create_gradio_app_script(
             time.sleep(1)
     if response.status_code == 200:
         json_response = response.json()
-        outputs = parse_outputs(json_response["output"])
-        return tuple(process_outputs(outputs))
+        #If the output component is JSON return the entire output response 
+        if(outputs[0].get_config()["name"] == "json"):
+            return json_response["output"]
+        predict_outputs = parse_outputs(json_response["output"])
+        processed_outputs = process_outputs(predict_outputs)
+        difference_outputs = expected_outputs - len(processed_outputs)
+        # If less outputs than expected, hide the extra ones
+        if difference_outputs > 0:
+            extra_outputs = [gr.update(visible=False)] * difference_outputs
+            processed_outputs.extend(extra_outputs)
+        # If more outputs than expected, cap the outputs to the expected number
+        elif difference_outputs < 0:
+            processed_outputs = processed_outputs[:difference_outputs]
+        
+        return tuple(processed_outputs) if len(processed_outputs) > 1 else processed_outputs[0]
     else:
         raise gr.Error(f"The submission failed! Error: {{response.status_code}}")\n"""
 

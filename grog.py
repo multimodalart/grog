@@ -122,30 +122,55 @@ def process_replicate_model_data(model_id):
         data = json.loads(json_str)
     except Exception as e:
         raise Exception(f"Failed to process model data: {str(e)}")
-    result = {
-        "docker_image_url": data["version"]["_extras"]["docker_image_name"],
-        "output_types": (
-            [detect_file_type(data["initialPrediction"]["output"])]
-            if isinstance(data["initialPrediction"]["output"], str)
-            else [
+    if data["initialPrediction"] is not None:
+        if isinstance(data["initialPrediction"]["output"], str):
+            output_types = [detect_file_type(data["initialPrediction"]["output"])]
+        elif isinstance(data["initialPrediction"]["output"], dict):
+            output_types = ["json"]
+        else:
+            output_types = [
                 detect_file_type(output)
                 for output in data["initialPrediction"]["output"]
             ]
-        ),
+        if all(x == "list" for x in output_types):
+            output_types = ["json"]
+    else:
+        output_types = None
+    result = {
+        "docker_image_url": data["version"]["_extras"]["docker_image_name"],
+        "output_types": output_types,
         "ordered_input_schema": sort_properties_by_order(
             data["version"]["_extras"]["dereferenced_openapi_schema"]["components"][
                 "schemas"
             ]["Input"]["properties"]
         ),
-        "example_inputs": data["initialPrediction"]["input"],
-        "model_name": data["version"]["_extras"]["model"]["name"],
-        "model_author": data["version"]["_extras"]["model"]["owner"],
-        "model_description": data["version"]["_extras"]["model"]["_extras"][
-            "description"
-        ],
-        "api_id": data["version"]["_extras"]["model"]["_extras"][
-            "latest_enabled_version_id"
-        ],
+        "example_inputs": (
+            data["initialPrediction"]["input"]
+            if data["initialPrediction"] is not None
+            else None
+        ),
+        "model_name": (
+            None
+            if "version" not in data
+            else data["version"]["_extras"]["model"]["name"]
+        ),
+        "model_author": (
+            None
+            if "version" not in data
+            else data["version"]["_extras"]["model"]["owner"]
+        ),
+        "model_description": (
+            None
+            if "version" not in data
+            else data["version"]["_extras"]["model"]["_extras"]["description"]
+        ),
+        "api_id": (
+            None
+            if "version" not in data
+            else data["version"]["_extras"]["model"]["_extras"][
+                "latest_enabled_version_id"
+            ]
+        ),
     }
 
     return result
