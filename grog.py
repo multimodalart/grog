@@ -64,6 +64,28 @@ def parse_docker_image_data(docker_uri):
     else:
         return None, None
 
+def wait_util_cog_ready(hostname, docker_port):
+    # check http://0.0.0.0:5000/health-check {"status": "READY"} or {"status":"STARTING","setup":null}
+    counter = 0
+    while True:
+        try:
+            response = requests.get(f"http://{hostname}:{docker_port}/health-check")
+            response.raise_for_status()
+            if response.json()["status"] == "READY":
+                print("Cog server is ready.")
+                break
+            else:
+                print(f"Waiting for cog server (models loading) {docker_port}...")
+                counter += 1
+                time.sleep(5)
+                if counter >= 250:
+                    raise Exception("Docker image timeout")
+        except requests.exceptions.HTTPError as e:
+            raise Exception(f"HTTP Error occurred: {e}")
+        except requests.exceptions.RequestException as e:
+            raise Exception(f"Error fetching data: {e}")
+        
+
 
 def wait_until_docker(hostname, docker_port):
     counter = 0
@@ -285,7 +307,7 @@ def main():
             #    outputs TODO
         else:
             api_url = f"http://{hostname}:5000/predictions"
-
+    wait_util_cog_ready(hostname, docker_port)
     if args.gradio_type == "dynamic" and not (args.run_type == "huggingface_spaces"):
         app = create_dynamic_gradio_app(
             inputs,
