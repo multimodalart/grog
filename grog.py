@@ -64,29 +64,55 @@ def parse_docker_image_data(docker_uri):
     else:
         return None, None
 
+def wait_util_cog_ready(hostname, docker_port):
+    # check http://0.0.0.0:5000/health-check {"status": "READY"} or {"status":"STARTING","setup":null}
+    counter = 0
+    while True:
+        try:
+            response = requests.get(f"http://{hostname}:{docker_port}/health-check")
+            response.raise_for_status()
+            if response.json()["status"] == "READY":
+                print("Cog Server is ready.")
+                break
+            else:
+                print(f"Waiting for cog server (models loading) {docker_port}...")
+                counter += 1
+                time.sleep(5)
+                if counter >= 250:
+                    raise Exception("Docker image timeout")
+        except requests.exceptions.HTTPError as e:
+            raise Exception(f"HTTP Error occurred: {e}")
+        except requests.exceptions.RequestException as e:
+            raise Exception(f"Error fetching data: {e}")
+        
 
-def wait_until_docker(docker_port):
+
+def wait_until_docker(hostname, docker_port):
     counter = 0
     while True:
         try:
             with socket.create_connection(
-                ("localhost", int(docker_port)), timeout=1
+                (hostname, int(docker_port)), timeout=1
             ) as sock:
-                print("Cog server is ready.")
+                print("Cog Docker is ready.")
                 break  # Exit the loop when the server is up
         except (socket.timeout, ConnectionRefusedError):
-            print(f"Waiting for cog server to start on port {docker_port}...")
+            print(f"Waiting for cog docker to start on port {docker_port}...")
             counter += 1
             time.sleep(5)
             if counter >= 250:
                 raise Exception("Docker image timeout")
 
 
-def run_docker_container(docker_image, local_port):
+def run_docker_container(docker_image, hostname, local_port):
     docker_command = [
         "docker",
         "run",
         "-d",
+        "-h",
+        hostname,
+        "--net",
+        "host",
         "-p",
         f"{local_port}:5000",
     ]
@@ -97,7 +123,7 @@ def run_docker_container(docker_image, local_port):
     docker_command.append(docker_image)
     process = subprocess.Popen(docker_command)
 
-    wait_until_docker(local_port)
+    wait_until_docker(hostname, local_port)
 
 
 def process_replicate_model_data(model_id):
@@ -209,6 +235,12 @@ def create_parser():
         default=None,
     )
     parser.add_argument(
+        "--hostname",
+        type=str,
+        help="The hostname to mount the docker application (0.0.0.0).",
+        default="0.0.0.0",
+    )
+    parser.add_argument(
         "--docker_port",
         type=int,
         help="The port to mount the docker application (default 5000).",
@@ -261,6 +293,7 @@ def main():
     check_conditional_args(args)
 
     docker_port = str(args.docker_port)
+    hostname = args.hostname
     api_id = None
     if args.replicate_model_id:
         data = process_replicate_model_data(args.replicate_model_id)
@@ -285,8 +318,8 @@ def main():
         api_id = data["api_id"]
     else:
         if args.run_type == "local" and args.gradio_type == "dynamic":
-            api_url = f"http://localhost:{docker_port}/predictions"
-            run_docker_container(docker_image, docker_port)
+            api_url = f"http://{hostname}:{docker_port}/predictions"
+            run_docker_container(docker_image, hostname, docker_port)
             # TODO for args.cog_url
             # if (args.cog_url) and not args.replicate_model_id:
             #    api_spec = parse_api_specs(
@@ -298,8 +331,8 @@ def main():
             #    inputs, inputs_string, names = build_gradio_inputs(ordered_input_schema)
             #    outputs TODO
         else:
-            api_url = f"http://localhost:5000/predictions"
-
+            api_url = f"http://{hostname}:5000/predictions"
+    wait_util_cog_ready(hostname, docker_port)
     if args.gradio_type == "dynamic" and not (args.run_type == "huggingface_spaces"):
         app = create_dynamic_gradio_app(
             inputs,
@@ -310,6 +343,7 @@ def main():
             title=title,
             model_description=model_description,
             names=names,
+            hostname=hostname,
         )
         app.launch(share=True)
     else:
@@ -327,6 +361,7 @@ def main():
                 or args.run_type == "huggingface_spaces"
                 else False
             ),
+            hostname=hostname,
         )
 
         if args.run_type == "local" or args.run_type == "huggingface_spaces":
