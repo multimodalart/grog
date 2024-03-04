@@ -90,3 +90,8 @@ All cli params you can use with `grog.py`:
 
 ## Limitations
 Right now, it is required for the Cog image to be hosted on Replicate for Grog to function, as generating a Gradio UI directly from a cog image is not yet implemented due to limitations on both Cog (regarding documentation on typing and number of outputs) and Gradio (no dynamic components). This is planned to be addressed in the future.
+
+## Acknowledgments
+Of course, without the amazing tools Gradio and Cog this tool wouldn't exist. They help make machine learning more accessible to all and I thank all the maintainers.
+
+Special thanks to [Radamés Ajna](https://twitter.com/radamar) who enabled the `Dockerfile` to run on any environment. 

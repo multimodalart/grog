@@ -64,6 +64,7 @@ def parse_docker_image_data(docker_uri):
     else:
         return None, None
 
+
 def wait_util_cog_ready(hostname, docker_port):
     # check http://0.0.0.0:5000/health-check {"status": "READY"} or {"status":"STARTING","setup":null}
     counter = 0
@@ -84,7 +85,6 @@ def wait_util_cog_ready(hostname, docker_port):
             raise Exception(f"HTTP Error occurred: {e}")
         except requests.exceptions.RequestException as e:
             raise Exception(f"Error fetching data: {e}")
-        
 
 
 def wait_until_docker(hostname, docker_port):
@@ -320,6 +320,7 @@ def main():
         if args.run_type == "local" and args.gradio_type == "dynamic":
             api_url = f"http://{hostname}:{docker_port}/predictions"
             run_docker_container(docker_image, hostname, docker_port)
+            wait_util_cog_ready(hostname, docker_port)
             # TODO for args.cog_url
             # if (args.cog_url) and not args.replicate_model_id:
             #    api_spec = parse_api_specs(
@@ -332,7 +333,7 @@ def main():
             #    outputs TODO
         else:
             api_url = f"http://{hostname}:5000/predictions"
-    wait_util_cog_ready(hostname, docker_port)
+
     if args.gradio_type == "dynamic" and not (args.run_type == "huggingface_spaces"):
         app = create_dynamic_gradio_app(
             inputs,
