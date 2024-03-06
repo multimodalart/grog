@@ -35,14 +35,14 @@ There are 3 ways to run Grog:
 #### Dynamic
 Both Cog and Gradio run in your machine. No remote server is needed; your computer needs to be powerful enough to run the chosen model. This means having a decent GPU for most modern Cog/Replicate images. You need to have Docker installed, and run: 
 ```shell
-python grog.py --replicate_model_id cjwbw/ledits --run_type local
+python grog.py --replicate_model_id fofr/face-to-sticker --run_type local
 ```
 This will download the Docker image to your computer, initialize it, crete a dynamic Gradio UI for it and provided that docker works in your environment (tested only on Linux)
 
 #### Static
 If you wish to customize the UI to your liking, change how the Docker Image is dealt with and instantiated (custom ports, etc); or even host the demo in the cloud, you may run
 ```shell
-python grog.py --replicate_model_id cjwbw/ledits --run_type local --gradio_type static
+python grog.py --replicate_model_id fofr/face-to-sticker --run_type local --gradio_type static
 ```
 This will create a new folder `docker_{model_name}_{timestamp}` with your Gradio `app.py` that you can edit/customize and a `Dockerfile` to build an image that will provide your Gradio + Cog application. This `Dockerfile` can not only be used locally, but also in any cloud service of your preference.
 
@@ -52,14 +52,14 @@ This will create a new folder `docker_{model_name}_{timestamp}` with your Gradio
 
 If you want to host a local UI that sends requests to Replicate's API, you can do:
 ```shell
-python grog.py --replicate_model_id cjwbw/ledits --run_type replicate_api --replicate_token r8_YourReplicateTokenHere
+python grog.py --replicate_model_id fofr/face-to-sticker --run_type replicate_api --replicate_token r8_YourReplicateTokenHere
 ```
 This will instantiate a Gradio UI generated dynamically that will send requests to the Replicate API
 
 #### Static
 If you wish to modify/customize your UI, you can do so by using the `--gradio_type static` 
 ```shell
-python grog.py --replicate_model_id cjwbw/ledits --run_type replicate_api --replicate_token r8_YourReplicateTokenHere --gradio_type static
+python grog.py --replicate_model_id fofr/face-to-sticker --run_type replicate_api --replicate_token r8_YourReplicateTokenHere --gradio_type static
 ```
 This will create a Gradio app `app_{name-of-model}-{timestamp}.py` that requests Replicate's API. You may modify it as you wish. ⚠️ This file will save your Replicate token in plain text. Be careful. ⚠️
 
@@ -69,7 +69,7 @@ PS: If your inputs include uploaded media, run the Gradio demo from the public U
 
 If you wish to host a demo with both the cog backend and the Gradio UI running on a [Hugging Face Space](https://huggingface.co/spaces) you can do:
 ```shell
-python grog.py --replicate_model_id cjwbw/ledits --run_type huggingface_spaces --huggingface_token hf_YourHuggingFaceToken --space_hardware t4-medium
+python grog.py --replicate_model_id fofr/face-to-sticker --run_type huggingface_spaces --huggingface_token hf_YourHuggingFaceToken --space_hardware t4-medium
 ```
 
 This will create a `Docker` Space on yout Hugging Face account that will mount the cog image and the Gradio demo, and function just like any other Hugging Face Space. You can modify the UI by editing the `app.py` in the remote repository. (This is essentially the same as deploying the Docker folder from `--run_type local --gradio_type static` to HF Spaces).
