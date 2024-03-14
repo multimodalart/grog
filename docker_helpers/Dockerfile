@@ -1,4 +1,4 @@
-RUN apt-get update && apt-get install -y netcat jq
+RUN apt-get update && apt-get install -y netcat-traditional jq
 
 RUN useradd -m -u 1000 user
 RUN chown -R user:user / || true
