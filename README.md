@@ -37,7 +37,7 @@ Both Cog and Gradio run in your machine. No remote server is needed; your comput
 ```shell
 python grog.py --replicate_model_id fofr/face-to-sticker --run_type local
 ```
-This will download the Docker image to your computer, initialize it, crete a dynamic Gradio UI for it and provided that docker works in your environment (tested only on Linux)
+This will download the Docker image to your computer, initialize it, create a dynamic Gradio UI for it and provided that docker works in your environment (tested only on Linux)
 
 #### Static
 If you wish to customize the UI to your liking, change how the Docker Image is dealt with and instantiated (custom ports, etc); or even host the demo in the cloud, you may run
