@@ -144,10 +144,17 @@ def process_replicate_model_data(model_id):
     try:
         soup = BeautifulSoup(html_content, "html.parser")
         script_tags = soup.find_all("script", {"type": "application/json"})
-        json_str = script_tags[2].string
-        data = json.loads(json_str)
+        data = None
+        for script_tag in script_tags:
+          if("initialPrediction" in script_tag.string):
+            json_str = script_tag.string
+            data = json.loads(json_str)
+            break
+        if data is None:
+          raise ValueError("Data with 'initialPrediction' not found in the HTML content.")
     except Exception as e:
         raise Exception(f"Failed to process model data: {str(e)}")
+    
     if data["initialPrediction"] is not None:
         if isinstance(data["initialPrediction"]["output"], str):
             output_types = [detect_file_type(data["initialPrediction"]["output"])]
